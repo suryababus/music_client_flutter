@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:get/route_manager.dart';
+import 'package:get/get.dart';
+import 'package:sociomusic/screen/home_screen/room_controller.dart';
 
 class SplashScreen extends StatefulWidget {
   SplashScreen({Key? key}) : super(key: key);
@@ -9,14 +10,6 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-  @override
-  void initState() {
-    super.initState();
-    var future = new Future.delayed(const Duration(seconds: 2), () {
-      Get.offNamed('/home');
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(

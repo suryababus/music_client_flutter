@@ -1,61 +1,65 @@
-class GetRoomResponse {
-  GetRoomResponse({
+class GetRoomsResponse {
+  GetRoomsResponse({
     required this.status,
     required this.data,
   });
   late final int status;
-  late final Data data;
+  late final List<Room> data;
 
-  GetRoomResponse.fromJson(Map<String, dynamic> json) {
+  GetRoomsResponse.fromJson(Map<String, dynamic> json) {
     status = json['status'];
-    data = Data.fromJson(json['data']);
+    data = List.from(json['data']).map((e) => Room.fromJson(e)).toList();
   }
 
   Map<String, dynamic> toJson() {
     final _data = <String, dynamic>{};
     _data['status'] = status;
-    _data['data'] = data.toJson();
+    _data['data'] = data.map((e) => e.toJson()).toList();
     return _data;
   }
 }
 
-class Data {
-  Data({
+class Room {
+  Room({
     required this.id,
     required this.name,
+    required this.songSpotifyUri,
+    required this.songSpotifyImage,
     required this.createdTime,
     required this.modifiedTime,
     required this.createdBy,
     required this.modifiedBy,
-    required this.songs,
   });
   late final String id;
   late final String name;
+  late final String songSpotifyUri;
+  late final String songSpotifyImage;
   late final String createdTime;
   late final String modifiedTime;
   late final CreatedBy createdBy;
   late final ModifiedBy modifiedBy;
-  late final List<Songs> songs;
 
-  Data.fromJson(Map<String, dynamic> json) {
+  Room.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     name = json['name'];
+    songSpotifyUri = json['song_spotify_uri'];
+    songSpotifyImage = json['song_spotify_image'];
     createdTime = json['created_time'];
     modifiedTime = json['modified_time'];
     createdBy = CreatedBy.fromJson(json['created_by']);
     modifiedBy = ModifiedBy.fromJson(json['modified_by']);
-    songs = List.from(json['songs']).map((e) => Songs.fromJson(e)).toList();
   }
 
   Map<String, dynamic> toJson() {
     final _data = <String, dynamic>{};
     _data['id'] = id;
     _data['name'] = name;
+    _data['song_spotify_uri'] = songSpotifyUri;
+    _data['song_spotify_image'] = songSpotifyImage;
     _data['created_time'] = createdTime;
     _data['modified_time'] = modifiedTime;
     _data['created_by'] = createdBy.toJson();
     _data['modified_by'] = modifiedBy.toJson();
-    _data['songs'] = songs.map((e) => e.toJson()).toList();
     return _data;
   }
 }
@@ -106,43 +110,6 @@ class ModifiedBy {
     _data['id'] = id;
     _data['name'] = name;
     _data['email'] = email;
-    return _data;
-  }
-}
-
-class Songs {
-  Songs({
-    required this.id,
-    required this.spotifyUrl,
-    required this.name,
-    required this.likes,
-    required this.dislikes,
-    required this.addedTime,
-  });
-  late final String id;
-  late final String spotifyUrl;
-  late final String name;
-  late final int likes;
-  late final int dislikes;
-  late final String addedTime;
-
-  Songs.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    spotifyUrl = json['spotify_url'];
-    name = json['name'];
-    likes = json['likes'];
-    dislikes = json['dislikes'];
-    addedTime = json['added_time'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final _data = <String, dynamic>{};
-    _data['id'] = id;
-    _data['spotify_url'] = spotifyUrl;
-    _data['name'] = name;
-    _data['likes'] = likes;
-    _data['dislikes'] = dislikes;
-    _data['added_time'] = addedTime;
     return _data;
   }
 }

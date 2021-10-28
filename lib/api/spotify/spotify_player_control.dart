@@ -6,10 +6,11 @@ Future<bool> connectToSpotify() async {
       clientId: Globals.CLIENT_ID, redirectUrl: Globals.REDIRECT_URI);
 }
 
-playSong(String spotifyURI) {
+Future<bool> playSong(String spotifyURI) async {
   try {
-    var play = SpotifySdk.play(spotifyUri: spotifyURI);
+    return await SpotifySdk.play(spotifyUri: spotifyURI);
   } catch (err) {
     print(err);
   }
+  return false;
 }
