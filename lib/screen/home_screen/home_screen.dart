@@ -1,14 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_connect/http/src/utils/utils.dart';
-import 'package:sociomusic/api/Auth.dart';
-import 'package:sociomusic/api/socio_music/response/get_room.dart';
-import 'package:sociomusic/api/socio_music/response/get_rooms.dart';
-import 'package:sociomusic/api/socio_music/socio_api.dart';
-import 'package:sociomusic/api/spotify/spotify_player_control.dart';
 import 'package:sociomusic/screen/home_screen/room_controller.dart';
-import 'package:sociomusic/spotify.config.dart';
-import 'package:spotify_sdk/spotify_sdk.dart';
 
 import 'views/room_carousel.dart';
 
@@ -100,24 +92,14 @@ class SongsList extends StatelessWidget {
           child: ListView.builder(
               itemCount: songs.length,
               itemBuilder: (context, index) {
-                return GestureDetector(
-                  onTap: () async  {
-                    await playSong(songs[index].spotifyUri);
-                    Future.delayed(const Duration(milliseconds: 2000), (){
-                    SpotifySdk.seekTo(
-                positionedMilliseconds: 24000);
-
-                    });
-                  },
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 20,
-                      vertical: 10,
-                    ),
-                    child: Text(
-                      songs[index].name,
-                      style: Theme.of(context).textTheme.bodyText1,
-                    ),
+                return Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 10,
+                  ),
+                  child: Text(
+                    songs[index].name,
+                    style: Theme.of(context).textTheme.bodyText1,
                   ),
                 );
               }),

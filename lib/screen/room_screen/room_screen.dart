@@ -1,10 +1,14 @@
 import 'dart:async';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/route_manager.dart';
 import 'package:sociomusic/api/spotify/spotify_api.dart';
+import 'package:sociomusic/screen/home_screen/player_controller.dart';
 import 'package:sociomusic/screen/home_screen/room_controller.dart';
+import 'package:spotify_sdk/models/image_uri.dart';
+import 'package:spotify_sdk/models/player_state.dart';
 import 'package:spotify_sdk/spotify_sdk.dart';
 
 import 'views/music_tab_item.dart';
@@ -124,22 +128,41 @@ class _PlayerControlState extends State<PlayerControl> {
     super.initState();
   }
 
+
   @override
   Widget build(BuildContext context) {
-    return GetBuilder<RoomController>(builder: (controller) {
+    return GetBuilder<PlayerController>(builder: (playerState) {
       try {
-        var playingSongName = controller.playerState?.track?.name ?? "";
-        var artistName = controller.playerState?.track?.artist.name ?? "";
-        var playedPosition = controller.playedmillis;
-        var totalDuriation = controller.playerState?.track?.duration ?? 1;
+        var playingSongName = playerState.playerState?.track?.name ?? "";
+        var imagerUri = playerState.playingSongImage;
+        var artistName = playerState.playerState?.track?.artist.name ?? "";
+        var playedPosition = playerState.playedmillis;
+        var totalDuriation = playerState.playerState?.track?.duration ?? 1;
         var playedPercent = playedPosition / totalDuriation;
-        var isPaused = controller.playerState?.isPaused ?? true;
+        var isPaused = playerState.playerState?.isPaused ?? true;
         if (playingSongName == "") return Container();
-        return SizedBox(
+
+        return Container(
           height: 100,
+          color: Colors.white10,
           child: Row(
             mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.start,
             children: [
+              Container(
+                height: 60,
+                width: 60,
+                margin: EdgeInsets.symmetric(horizontal: 10),
+                child: FutureBuilder<Uint8List?>(
+                    future: imagerUri,
+                    builder: (context, snapshot) {
+                      print('called');
+                      if (snapshot.hasData) {
+                        return Image.memory(snapshot.data!);
+                      }
+                      return CircularProgressIndicator();
+                    }),
+              ),
               Expanded(
                 child: Column(
                   mainAxisSize: MainAxisSize.max,

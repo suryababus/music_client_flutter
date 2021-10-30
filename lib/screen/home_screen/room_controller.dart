@@ -9,9 +9,10 @@ import 'package:sociomusic/api/socio_music/response/get_rooms.dart';
 import 'package:sociomusic/api/socio_music/socio_api.dart';
 import 'package:sociomusic/api/spotify/spotify_player_control.dart';
 import 'package:sociomusic/spotify.config.dart';
-import 'package:spotify_sdk/models/player_state.dart';
 import 'package:spotify_sdk/spotify_sdk.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
+
+import 'player_controller.dart';
 
 class RoomController extends GetxController {
   bool loading = true;
@@ -19,8 +20,6 @@ class RoomController extends GetxController {
   List<Song> songs = [];
   int selectedRoomIndex = 0;
   Map<String, List<Song>> _roomSongsCatch = {};
-  PlayerState? playerState;
-  var playedmillis = 0;
   WebSocketChannel? channel;
 
   @override
@@ -54,6 +53,8 @@ class RoomController extends GetxController {
     if (!await SocioMusicAuth.authenticate()) {
       return;
     }
+    Get.put<PlayerController>(PlayerController());
+
     var response = await getRooms();
     rooms = response.data;
     loading = false;
@@ -62,26 +63,10 @@ class RoomController extends GetxController {
     await refreshRoomSongs();
     update();
     Get.offNamed('/home');
-    var state = await SpotifySdk.subscribePlayerState();
-    state.listen((event) {
-      playerState = event;
-      playedmillis = event.playbackPosition.milliseconds.inMilliseconds;
-      update();
-    });
     connectWS();
-    _startPlayerSyncker();
   }
 
-  void _startPlayerSyncker() {
-    const oneSec = Duration(seconds: 1);
-    Timer.periodic(oneSec, (Timer t) {
-      if (playerState == null) return;
-      if (playerState!.isPaused) return;
-      playedmillis = playedmillis + 1000;
-      update();
-    });
-    super.onReady();
-  }
+  
 
   void updateSelectedRoom(int index) async {
     print(index);
@@ -158,15 +143,23 @@ class RoomController extends GetxController {
             refreshRoomSongs();
           }
           break;
+        case 'sync':
+          {
+            songs =  List.from(data??[]).map((e) => Song.fromJson(e)).toList();
+          }
+          break;
         case 'play_song':
           {
             var currentSong = Song.fromJson(data['currentSong']);
             var startedMillis = data['startedMillis'];
             var currentMillis = data['currentMillis'];
             await playSong(currentSong.spotifyUri);
-
-            SpotifySdk.seekTo(
-                positionedMilliseconds: 24000);
+            await SpotifySdk.pause();
+            Future.delayed(const Duration(milliseconds: 2000), () {
+              SpotifySdk.seekTo(
+                  positionedMilliseconds: currentMillis - startedMillis);
+            });
+            await SpotifySdk.resume();
           }
           break;
         default:

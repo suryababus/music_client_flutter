@@ -5,6 +5,7 @@ import 'package:sociomusic/api/socio_music/response/get_rooms.dart';
 import 'package:sociomusic/api/spotify/spotify_player_control.dart';
 import 'package:sociomusic/screen/error_screen/error_screen.dart';
 import 'package:sociomusic/screen/home_screen/home_screen.dart';
+import 'package:sociomusic/screen/home_screen/player_controller.dart';
 import 'package:sociomusic/screen/splashScreen.dart';
 import 'package:sociomusic/ui/theme/theme.dart';
 

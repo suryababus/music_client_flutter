@@ -116,6 +116,7 @@ class RadioLineItem extends StatelessWidget {
                   ),
                   Text(
                     'Added By: ' + song.addedByUserName,
+                    overflow: TextOverflow.ellipsis,
                     style: TextStyle(color: Colors.white.withOpacity(0.3)),
                   ),
                 ],
