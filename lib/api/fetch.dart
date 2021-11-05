@@ -27,7 +27,7 @@ class FetchFromSocioMusic {
   }
 
   static Future<Response<dynamic>?> post(
-      String url, Map<String, String>? data) async {
+      String url, Map<String, dynamic>? data) async {
     print(data);
     try {
       var response = await dio.post(Globals.SOCIO_MUSIC_DOMAIN + url,

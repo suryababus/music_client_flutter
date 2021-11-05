@@ -1,14 +1,14 @@
 import 'dart:async';
-import 'dart:convert';
-
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:sociomusic/api/Auth.dart';
 import 'package:sociomusic/api/socio_music/response/get_room.dart';
 import 'package:sociomusic/api/socio_music/response/get_rooms.dart';
 import 'package:sociomusic/api/socio_music/socio_api.dart';
 import 'package:sociomusic/api/spotify/spotify_player_control.dart';
-import 'package:sociomusic/spotify.config.dart';
+import 'package:sociomusic/screen/home_screen/socket_controller.dart';
 import 'package:spotify_sdk/spotify_sdk.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
@@ -20,7 +20,7 @@ class RoomController extends GetxController {
   List<Song> songs = [];
   int selectedRoomIndex = 0;
   Map<String, List<Song>> _roomSongsCatch = {};
-  WebSocketChannel? channel;
+  SocketController? socketController;
 
   @override
   void onInit() {
@@ -31,7 +31,31 @@ class RoomController extends GetxController {
   @override
   void onReady() async {
     // called after the widget is rendered on screen
-    if (await connectToSpotify()) {
+    bool connected = false;
+    try {
+      connected = await connectToSpotify();
+    } on PlatformException catch (err) {
+      print(err);
+      if (err.code == 'CouldNotFindSpotifyApp') {
+        Get.offNamed('/installSpotify');
+      }
+      if (err.code == 'NotLoggedInException') {
+        Get.offNamed('/error', arguments: {
+          'errorTitle': 'Not LoggedIn',
+          "errorMessage": 'Please open spotify app and login.'
+        });
+      } else {
+        Get.offNamed('/error',
+            arguments: {'errorTitle': err.code, "errorMessage": err.message});
+      }
+      return;
+    } catch (err) {
+      Get.offNamed('/error', arguments: {
+        'errorTitle': "Connection Error!",
+        "errorMessage": "Not connected to spotify"
+      });
+    }
+    if (connected) {
       Get.snackbar(
         "SocioMusic",
         "Connected to spotify.",
@@ -40,6 +64,7 @@ class RoomController extends GetxController {
         duration: Duration(seconds: 2),
         instantInit: false,
       );
+      SpotifySdk.pause();
     } else {
       Get.snackbar(
         "SocioMusic",
@@ -53,20 +78,27 @@ class RoomController extends GetxController {
     if (!await SocioMusicAuth.authenticate()) {
       return;
     }
-    Get.put<PlayerController>(PlayerController());
+    Get.put<PlayerController>(PlayerController(), permanent: true);
+    socketController =
+        Get.put<SocketController>(SocketController(this), permanent: true);
 
     var response = await getRooms();
+
     rooms = response.data;
     loading = false;
     print("loaded");
     Get.offNamed('/home');
+    // Get.offNamed('/error', arguments: {
+    //   'errorTitle': "Connection Error!",
+    //   "errorMessage": "Not connected to internet"
+    // });
     await refreshRoomSongs();
     update();
-    Get.offNamed('/home');
-    connectWS();
   }
 
-  
+  void joinRoom() {
+    socketController?.connectToRoom(rooms[selectedRoomIndex].id);
+  }
 
   void updateSelectedRoom(int index) async {
     print(index);
@@ -99,83 +131,20 @@ class RoomController extends GetxController {
     update();
   }
 
-  void connectWS() {
-    try {
-      channel = WebSocketChannel.connect(
-        Uri.parse(Globals.SOCIO_MUSIC_SOCKET_DOMAIN),
-      );
-      channel?.stream.listen((event) {
-        print("event");
-        print(event);
-        handleSocketEvents(event);
-      });
-      print('websocket connected');
-    } catch (err) {
-      print('websocket error');
-      print(err);
-    }
+  void addSong(Song song) {
+    songs.add(song);
+    update();
   }
 
-  void joinRoom() async {
-    print('join room');
-    String roomId = rooms[selectedRoomIndex].id;
-    channel?.sink.add(jsonEncode({
-      "event": 'join_room',
-      "data": roomId,
-      "token": await SocioMusicAuth.getToken()
-    }));
-  }
-
-  void handleSocketEvents(event) async {
-    try {
-      var json = jsonDecode(event) as Map<String, dynamic>;
-      var action = json["action"];
-      var data = json["data"];
-      switch (action) {
-        case 'song_added':
-          {
-            songs.add(new Song.fromJson(json["data"]));
-            update();
-          }
-          break;
-        case 'reaction':
-          {
-            refreshRoomSongs();
-          }
-          break;
-        case 'sync':
-          {
-            songs =  List.from(data??[]).map((e) => Song.fromJson(e)).toList();
-          }
-          break;
-        case 'play_song':
-          {
-            var currentSong = Song.fromJson(data['currentSong']);
-            var startedMillis = data['startedMillis'];
-            var currentMillis = data['currentMillis'];
-            await playSong(currentSong.spotifyUri);
-            await SpotifySdk.pause();
-            Future.delayed(const Duration(milliseconds: 2000), () {
-              SpotifySdk.seekTo(
-                  positionedMilliseconds: currentMillis - startedMillis);
-            });
-            await SpotifySdk.resume();
-          }
-          break;
-        default:
-          {
-            print('unhandled action ${json["action"]}');
-          }
-      }
-    } on Exception catch (e) {
-      print("handleSocketEvents err");
-      print(e);
-    }
+  void replaceSong(List<Song> _songs) {
+    songs = _songs;
+    update();
   }
 
   @override
   void onClose() {
     // called just before the Controller is deleted from memory
+    print('onClose called');
     super.onClose();
   }
 }

@@ -36,11 +36,13 @@ class _MusicTabViewState extends State<MusicTabView>
       alignment: Alignment.center,
       children: [
         GetBuilder<RoomController>(builder: (roomController) {
-          return ListView.builder(
-              itemCount: roomController.songs.length,
-              itemBuilder: (_, index) {
-                return RadioLineItem(song: roomController.songs[index]);
-              });
+          return roomController.songs.length > 0
+              ? ListView.builder(
+                  itemCount: roomController.songs.length,
+                  itemBuilder: (_, index) {
+                    return RadioLineItem(song: roomController.songs[index]);
+                  })
+              : Center(child: Text("no Songs here"));
         }),
         Positioned(
           bottom: 5,
@@ -49,7 +51,7 @@ class _MusicTabViewState extends State<MusicTabView>
               width: 150,
               height: 45,
               decoration: BoxDecoration(
-                  color: Color(0XFFC3A137).withOpacity(0.9),
+                  color: Colors.blue.withOpacity(0.8).withOpacity(0.9),
                   borderRadius: BorderRadius.all(
                     Radius.circular(5),
                   )),

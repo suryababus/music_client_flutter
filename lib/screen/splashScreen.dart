@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:rive/rive.dart';
 import 'package:sociomusic/screen/home_screen/room_controller.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -10,6 +11,9 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
+  RoomController controller =
+      Get.put<RoomController>(RoomController(), permanent: true);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -19,10 +23,14 @@ class _SplashScreenState extends State<SplashScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Container(
-                width: 150,
-                padding: EdgeInsets.all(10),
-                child: Image.asset('assets/images/app_icon.png'),
+              Center(
+                child: Container(
+                  width: 150,
+                  height: 150,
+                  padding: EdgeInsets.all(10),
+                  child:
+                      RiveAnimation.asset('assets/animations/sociomusic.riv'),
+                ),
               ),
               Container(
                 padding: EdgeInsets.only(top: 10),

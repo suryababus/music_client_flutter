@@ -6,6 +6,7 @@ import 'package:sociomusic/api/spotify/spotify_player_control.dart';
 import 'package:sociomusic/screen/error_screen/error_screen.dart';
 import 'package:sociomusic/screen/home_screen/home_screen.dart';
 import 'package:sociomusic/screen/home_screen/player_controller.dart';
+import 'package:sociomusic/screen/install_spotify/install_spotify.dart';
 import 'package:sociomusic/screen/splashScreen.dart';
 import 'package:sociomusic/ui/theme/theme.dart';
 
@@ -23,8 +24,6 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  RoomController controller = Get.put<RoomController>(RoomController());
-
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
@@ -43,6 +42,11 @@ class _MyAppState extends State<MyApp> {
         GetPage(
           name: '/error',
           page: () => ErrorScreen(),
+          transition: Transition.cupertino,
+        ),
+        GetPage(
+          name: '/installSpotify',
+          page: () => InstallSpotifyScreen(),
           transition: Transition.cupertino,
         )
       ],

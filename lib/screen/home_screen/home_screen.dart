@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sociomusic/screen/home_screen/room_controller.dart';
+import 'package:sociomusic/screen/room_screen/views/player_control.dart';
 
 import 'views/room_carousel.dart';
 
@@ -22,32 +23,30 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        appBar: AppBar(
+          title: Text("HOME"),
+          centerTitle: true,
+          backgroundColor: Colors.black,
+          leading: Icon(
+            Icons.notifications_active,
+            color: Colors.blue.withOpacity(0.8),
+          ),
+          actions: [
+            Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: Icon(
+                Icons.settings,
+                color: Colors.blue.withOpacity(0.8),
+              ),
+            )
+          ],
+        ),
         body: GetBuilder<RoomController>(builder: (controller) {
           return Column(
             children: [
               Flexible(
-                flex: 2,
+                flex: 3,
                 child: RoomCarousel(),
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Container(
-                    color: Color(0xC3A137),
-                    child: TextButton(
-                      onPressed: () {
-                        Get.toNamed('/room');
-                      },
-                      child: Row(
-                        children: [
-                          Icon(Icons.play_circle),
-                          Padding(padding: EdgeInsets.all(2)),
-                          Text('Play'),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
               ),
               Flexible(
                 flex: 3,
@@ -88,7 +87,7 @@ class SongsList extends StatelessWidget {
             style: Theme.of(context).textTheme.headline1,
           ),
         ),
-        Flexible(
+        Expanded(
           child: ListView.builder(
               itemCount: songs.length,
               itemBuilder: (context, index) {
@@ -104,6 +103,7 @@ class SongsList extends StatelessWidget {
                 );
               }),
         ),
+        PlayerControl()
       ],
     );
   }

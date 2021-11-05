@@ -16,9 +16,8 @@ class PlayerController extends GetxController {
     state.listen((event) {
       playerState = event;
       var imageUri = playerState?.track?.imageUri;
-      if(imageUri != null){
-      playingSongImage =
-          SpotifySdk.getImage(imageUri: imageUri);
+      if (imageUri != null) {
+        playingSongImage = SpotifySdk.getImage(imageUri: imageUri);
       }
       playedmillis = event.playbackPosition.milliseconds.inMilliseconds;
       update();

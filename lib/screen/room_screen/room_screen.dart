@@ -1,17 +1,10 @@
-import 'dart:async';
-import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/route_manager.dart';
-import 'package:sociomusic/api/spotify/spotify_api.dart';
-import 'package:sociomusic/screen/home_screen/player_controller.dart';
 import 'package:sociomusic/screen/home_screen/room_controller.dart';
-import 'package:spotify_sdk/models/image_uri.dart';
-import 'package:spotify_sdk/models/player_state.dart';
-import 'package:spotify_sdk/spotify_sdk.dart';
 
 import 'views/music_tab_item.dart';
+import 'views/player_control.dart';
 
 class RoomScreen extends StatefulWidget {
   RoomScreen({Key? key}) : super(key: key);
@@ -51,12 +44,12 @@ class _RoomScreenState extends State<RoomScreen>
             Icon(
               Icons.arrow_back_ios_new_rounded,
               size: 20,
-              color: Colors.red[500],
+              color: Colors.white54,
             ),
             Text(
-              'Exit',
+              'Back',
               style: TextStyle(
-                color: Colors.red[500],
+                color: Colors.white54,
                 fontWeight: FontWeight.w700,
               ),
             )
@@ -99,7 +92,9 @@ class _RoomScreenState extends State<RoomScreen>
           tabController?.index == 0
               ? Icons.music_note_rounded
               : Icons.music_note_outlined,
-          color: tabController?.index == 0 ? Color(0XFFC3A137) : Colors.white,
+          color: tabController?.index == 0
+              ? Colors.blue.withOpacity(0.8)
+              : Colors.white,
         ),
       ),
       new Tab(
@@ -107,117 +102,11 @@ class _RoomScreenState extends State<RoomScreen>
         tabController?.index == 1
             ? Icons.chat_bubble_rounded
             : Icons.chat_bubble_outline,
-        color: tabController?.index == 1 ? Color(0XFFC3A137) : Colors.white,
+        color: tabController?.index == 1
+            ? Colors.blue.withOpacity(0.8)
+            : Colors.white,
       )),
     ]);
-  }
-}
-
-class PlayerControl extends StatefulWidget {
-  const PlayerControl({
-    Key? key,
-  }) : super(key: key);
-
-  @override
-  _PlayerControlState createState() => _PlayerControlState();
-}
-
-class _PlayerControlState extends State<PlayerControl> {
-  @override
-  void initState() {
-    super.initState();
-  }
-
-
-  @override
-  Widget build(BuildContext context) {
-    return GetBuilder<PlayerController>(builder: (playerState) {
-      try {
-        var playingSongName = playerState.playerState?.track?.name ?? "";
-        var imagerUri = playerState.playingSongImage;
-        var artistName = playerState.playerState?.track?.artist.name ?? "";
-        var playedPosition = playerState.playedmillis;
-        var totalDuriation = playerState.playerState?.track?.duration ?? 1;
-        var playedPercent = playedPosition / totalDuriation;
-        var isPaused = playerState.playerState?.isPaused ?? true;
-        if (playingSongName == "") return Container();
-
-        return Container(
-          height: 100,
-          color: Colors.white10,
-          child: Row(
-            mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Container(
-                height: 60,
-                width: 60,
-                margin: EdgeInsets.symmetric(horizontal: 10),
-                child: FutureBuilder<Uint8List?>(
-                    future: imagerUri,
-                    builder: (context, snapshot) {
-                      print('called');
-                      if (snapshot.hasData) {
-                        return Image.memory(snapshot.data!);
-                      }
-                      return CircularProgressIndicator();
-                    }),
-              ),
-              Expanded(
-                child: Column(
-                  mainAxisSize: MainAxisSize.max,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      playingSongName,
-                      style: TextStyle(color: Colors.white, fontSize: 24),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(2),
-                      child: Text(
-                        artistName,
-                        style: TextStyle(
-                            color: Colors.white.withOpacity(0.5), fontSize: 10),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(10),
-                      child: LinearProgressIndicator(
-                        value: playedPercent,
-                        backgroundColor: Colors.white.withOpacity(0.2),
-                      ),
-                    )
-                  ],
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: GestureDetector(
-                  onTap: () {
-                    if (isPaused) {
-                      SpotifySdk.resume();
-                    } else {
-                      SpotifySdk.pause();
-                    }
-                  },
-                  child: Icon(
-                    isPaused
-                        ? Icons.play_circle_rounded
-                        : Icons.pause_circle_rounded,
-                    size: 80,
-                    color: Color(0XFFC3A137).withOpacity(0.95),
-                  ),
-                ),
-              )
-            ],
-          ),
-        );
-      } catch (err) {
-        print(err);
-        return Container();
-      }
-    });
   }
 }
 
