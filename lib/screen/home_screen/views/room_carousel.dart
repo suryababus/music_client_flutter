@@ -4,7 +4,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sociomusic/api/socio_music/response/get_rooms.dart';
-import 'package:sociomusic/screen/home_screen/room_controller.dart';
+import 'package:sociomusic/controller/room_controller.dart';
 
 class RoomCarousel extends StatefulWidget {
   const RoomCarousel({Key? key}) : super(key: key);
@@ -30,7 +30,7 @@ class _RoomCarouselState extends State<RoomCarousel> {
                 itemCount: rooms.length,
                 physics: const PageScrollPhysics(),
                 controller: PageController(
-                  viewportFraction: 0.6,
+                  viewportFraction: 0.7,
                 ),
                 itemBuilder: (context, index) {
                   return Padding(
@@ -39,7 +39,12 @@ class _RoomCarouselState extends State<RoomCarousel> {
                       child: Stack(
                         fit: StackFit.expand,
                         children: [
-                          Center(
+                          Container(
+                            alignment: roomController.selectedRoomIndex == index
+                                ? Alignment.center
+                                : roomController.selectedRoomIndex == index - 1
+                                    ? Alignment.centerLeft
+                                    : Alignment.centerRight,
                             child: AnimatedContainer(
                               clipBehavior: Clip.hardEdge,
                               duration: Duration(milliseconds: 300),
@@ -49,7 +54,7 @@ class _RoomCarouselState extends State<RoomCarousel> {
                                 vertical:
                                     roomController.selectedRoomIndex == index
                                         ? 0
-                                        : 15.0,
+                                        : 20.0,
                               ),
                               child: Image.network(
                                 rooms[index].songSpotifyImage,
@@ -57,9 +62,9 @@ class _RoomCarouselState extends State<RoomCarousel> {
                               ),
                             ),
                           ),
-                          Container(
-                            color: Colors.black.withOpacity(0.3),
-                          ),
+                          // Container(
+                          //   color: Colors.black.withOpacity(0.3),
+                          // ),
                           // Positioned(
                           //   bottom: 0,
                           //   left: 0,
@@ -99,9 +104,12 @@ class _RoomCarouselState extends State<RoomCarousel> {
             children: [
               Expanded(
                 flex: 1,
-                child: Icon(
-                  Icons.thumb_up_off_alt_outlined,
-                  color: Colors.blue.withOpacity(0.8),
+                child: IconButton(
+                  onPressed: () {},
+                  icon: Icon(
+                    Icons.add_circle_outline_outlined,
+                    color: Color(0Xff0177fa),
+                  ),
                 ),
               ),
               Expanded(
@@ -133,7 +141,7 @@ class _RoomCarouselState extends State<RoomCarousel> {
                     },
                     icon: Icon(
                       Icons.play_circle,
-                      color: Colors.blue.withOpacity(0.8),
+                      color: Color(0Xff0177fa),
                     ),
                   ),
                 ),

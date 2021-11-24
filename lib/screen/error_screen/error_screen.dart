@@ -37,12 +37,12 @@ class ErrorScreen extends StatelessWidget {
                 children: [
                   Icon(
                     Icons.replay_rounded,
-                    color: Colors.blue.withOpacity(0.8),
+                    color: Color(0Xff0177fa),
                   ),
                   Text(
                     'reload',
                     style: TextStyle(
-                      color: Colors.blue.withOpacity(0.8),
+                      color: Color(0Xff0177fa),
                     ),
                   )
                 ],

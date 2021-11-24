@@ -1,16 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:sociomusic/api/socio_music/socio_api.dart';
-import 'package:sociomusic/api/socio_music/response/get_rooms.dart';
-import 'package:sociomusic/api/spotify/spotify_player_control.dart';
 import 'package:sociomusic/screen/error_screen/error_screen.dart';
 import 'package:sociomusic/screen/home_screen/home_screen.dart';
-import 'package:sociomusic/screen/home_screen/player_controller.dart';
 import 'package:sociomusic/screen/install_spotify/install_spotify.dart';
+import 'package:sociomusic/screen/settings/settings_screen.dart';
 import 'package:sociomusic/screen/splashScreen.dart';
 import 'package:sociomusic/ui/theme/theme.dart';
 
-import 'screen/home_screen/room_controller.dart';
 import 'screen/room_screen/room_screen.dart';
 
 void main() {
@@ -47,6 +43,11 @@ class _MyAppState extends State<MyApp> {
         GetPage(
           name: '/installSpotify',
           page: () => InstallSpotifyScreen(),
+          transition: Transition.cupertino,
+        ),
+        GetPage(
+          name: '/settings',
+          page: () => SettingsScreen(),
           transition: Transition.cupertino,
         )
       ],

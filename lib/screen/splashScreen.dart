@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:rive/rive.dart';
-import 'package:sociomusic/screen/home_screen/room_controller.dart';
+import 'package:sociomusic/controller/profile_controller.dart';
 
 class SplashScreen extends StatefulWidget {
   SplashScreen({Key? key}) : super(key: key);
@@ -11,8 +11,8 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-  RoomController controller =
-      Get.put<RoomController>(RoomController(), permanent: true);
+  ProfileController controller =
+      Get.put<ProfileController>(ProfileController(), permanent: true);
 
   @override
   Widget build(BuildContext context) {

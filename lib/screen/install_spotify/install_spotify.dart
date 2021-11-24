@@ -20,7 +20,7 @@ class InstallSpotifyScreen extends StatelessWidget {
                 onPressed: () {},
                 child: Container(
                   padding: EdgeInsets.all(10),
-                  color: Colors.blue.withOpacity(0.8),
+                  color: Color(0Xff0177fa),
                   child: Text(
                     'INSTALL SPOTIFY',
                     style: TextStyle(

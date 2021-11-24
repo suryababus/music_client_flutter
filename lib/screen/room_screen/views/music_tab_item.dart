@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sociomusic/api/socio_music/response/get_room.dart';
 import 'package:sociomusic/api/socio_music/socio_api.dart';
-import 'package:sociomusic/screen/home_screen/room_controller.dart';
+import 'package:sociomusic/controller/room_controller.dart';
 
 import 'add_song_modal.dart';
 
@@ -42,7 +42,11 @@ class _MusicTabViewState extends State<MusicTabView>
                   itemBuilder: (_, index) {
                     return RadioLineItem(song: roomController.songs[index]);
                   })
-              : Center(child: Text("no Songs here"));
+              : Center(
+                  child: Text(
+                  "no Songs here",
+                  style: TextStyle(color: Colors.white),
+                ));
         }),
         Positioned(
           bottom: 5,
@@ -51,7 +55,7 @@ class _MusicTabViewState extends State<MusicTabView>
               width: 150,
               height: 45,
               decoration: BoxDecoration(
-                  color: Colors.blue.withOpacity(0.8).withOpacity(0.9),
+                  color: Color(0Xff0177fa).withOpacity(0.9),
                   borderRadius: BorderRadius.all(
                     Radius.circular(5),
                   )),
@@ -116,10 +120,19 @@ class RadioLineItem extends StatelessWidget {
                     style: TextStyle(color: Colors.white),
                     overflow: TextOverflow.ellipsis,
                   ),
-                  Text(
-                    'Added By: ' + song.addedByUserName,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(color: Colors.white.withOpacity(0.3)),
+                  Wrap(
+                    children: [
+                      Text(
+                        'Added By: ',
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(color: Colors.white.withOpacity(0.3)),
+                      ),
+                      Text(
+                        song.addedByUserName,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(color: Colors.blue),
+                      ),
+                    ],
                   ),
                 ],
               ),

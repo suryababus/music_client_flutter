@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -8,9 +7,9 @@ import 'package:sociomusic/api/socio_music/response/get_room.dart';
 import 'package:sociomusic/api/socio_music/response/get_rooms.dart';
 import 'package:sociomusic/api/socio_music/socio_api.dart';
 import 'package:sociomusic/api/spotify/spotify_player_control.dart';
-import 'package:sociomusic/screen/home_screen/socket_controller.dart';
+import 'package:sociomusic/controller/message_controller.dart';
+import 'package:sociomusic/controller/socket_controller.dart';
 import 'package:spotify_sdk/spotify_sdk.dart';
-import 'package:web_socket_channel/web_socket_channel.dart';
 
 import 'player_controller.dart';
 
@@ -28,72 +27,24 @@ class RoomController extends GetxController {
     super.onInit();
   }
 
+  void setSocketController(SocketController _socketController) {
+    socketController = _socketController;
+  }
+
   @override
   void onReady() async {
-    // called after the widget is rendered on screen
-    bool connected = false;
-    try {
-      connected = await connectToSpotify();
-    } on PlatformException catch (err) {
-      print(err);
-      if (err.code == 'CouldNotFindSpotifyApp') {
-        Get.offNamed('/installSpotify');
-      }
-      if (err.code == 'NotLoggedInException') {
-        Get.offNamed('/error', arguments: {
-          'errorTitle': 'Not LoggedIn',
-          "errorMessage": 'Please open spotify app and login.'
-        });
-      } else {
-        Get.offNamed('/error',
-            arguments: {'errorTitle': err.code, "errorMessage": err.message});
-      }
-      return;
-    } catch (err) {
-      Get.offNamed('/error', arguments: {
-        'errorTitle': "Connection Error!",
-        "errorMessage": "Not connected to spotify"
-      });
-    }
-    if (connected) {
-      Get.snackbar(
-        "SocioMusic",
-        "Connected to spotify.",
-        colorText: Colors.white,
-        snackPosition: SnackPosition.BOTTOM,
-        duration: Duration(seconds: 2),
-        instantInit: false,
-      );
-      SpotifySdk.pause();
-    } else {
-      Get.snackbar(
-        "SocioMusic",
-        "Error connecting to spotify.",
-        colorText: Colors.white,
-        snackPosition: SnackPosition.BOTTOM,
-        duration: Duration(seconds: 2),
-        instantInit: false,
-      );
-    }
-    if (!await SocioMusicAuth.authenticate()) {
-      return;
-    }
-    Get.put<PlayerController>(PlayerController(), permanent: true);
-    socketController =
-        Get.put<SocketController>(SocketController(this), permanent: true);
-
     var response = await getRooms();
 
     rooms = response.data;
     loading = false;
     print("loaded");
     Get.offNamed('/home');
-    // Get.offNamed('/error', arguments: {
-    //   'errorTitle': "Connection Error!",
-    //   "errorMessage": "Not connected to internet"
-    // });
     await refreshRoomSongs();
     update();
+    SpotifySdk.subscribeConnectionStatus().listen((event) {
+      print('connection event');
+      print(event);
+    });
   }
 
   void joinRoom() {
@@ -102,6 +53,7 @@ class RoomController extends GetxController {
 
   void updateSelectedRoom(int index) async {
     print(index);
+    _roomSongsCatch[rooms[selectedRoomIndex].id] = songs;
     selectedRoomIndex = index;
     update();
     if (!_roomSongsCatch.containsKey(rooms[index].id)) {

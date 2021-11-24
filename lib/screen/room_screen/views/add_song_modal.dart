@@ -3,8 +3,7 @@ import 'package:get/get.dart';
 import 'package:sociomusic/api/socio_music/socio_api.dart';
 import 'package:sociomusic/api/spotify/spotify_api.dart';
 import 'package:sociomusic/api/spotify/response/search_track.dart';
-import 'package:sociomusic/api/spotify/spotify_player_control.dart';
-import 'package:sociomusic/screen/home_screen/room_controller.dart';
+import 'package:sociomusic/controller/room_controller.dart';
 
 class AddSongModal extends StatefulWidget {
   const AddSongModal({

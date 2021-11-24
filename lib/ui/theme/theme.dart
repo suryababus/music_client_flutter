@@ -4,7 +4,10 @@ class CustomTheme {
   static ThemeData get theme {
     return ThemeData(
       primaryColor: Colors.brown,
-      backgroundColor: Colors.black,
+      appBarTheme: AppBarTheme(
+        backgroundColor: Colors.blue.withOpacity(0.1),
+        shadowColor: Colors.transparent,
+      ),
       scaffoldBackgroundColor: Colors.black,
       textTheme: TextTheme(
         headline1: TextStyle(
