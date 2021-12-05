@@ -1,24 +1,16 @@
 import 'dart:async';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:sociomusic/api/Auth.dart';
 import 'package:sociomusic/api/socio_music/response/get_room.dart';
 import 'package:sociomusic/api/socio_music/response/get_rooms.dart';
 import 'package:sociomusic/api/socio_music/socio_api.dart';
-import 'package:sociomusic/api/spotify/spotify_player_control.dart';
-import 'package:sociomusic/controller/message_controller.dart';
 import 'package:sociomusic/controller/socket_controller.dart';
 import 'package:spotify_sdk/spotify_sdk.dart';
-
-import 'player_controller.dart';
 
 class RoomController extends GetxController {
   bool loading = true;
   List<Room> rooms = [];
   List<Song> songs = [];
-  int selectedRoomIndex = 0;
-  Map<String, List<Song>> _roomSongsCatch = {};
+  String joinedRoom = "";
   SocketController? socketController;
 
   @override
@@ -38,8 +30,7 @@ class RoomController extends GetxController {
     rooms = response.data;
     loading = false;
     print("loaded");
-    Get.offNamed('/home');
-    await refreshRoomSongs();
+    Get.offAllNamed('/home');
     update();
     SpotifySdk.subscribeConnectionStatus().listen((event) {
       print('connection event');
@@ -47,20 +38,13 @@ class RoomController extends GetxController {
     });
   }
 
-  void joinRoom() {
-    socketController?.connectToRoom(rooms[selectedRoomIndex].id);
-  }
-
-  void updateSelectedRoom(int index) async {
-    print(index);
-    _roomSongsCatch[rooms[selectedRoomIndex].id] = songs;
-    selectedRoomIndex = index;
-    update();
-    if (!_roomSongsCatch.containsKey(rooms[index].id)) {
-      var resp = await getRoom(rooms[index].id);
-      _roomSongsCatch[rooms[index].id] = resp.data.songs;
-    }
-    songs = _roomSongsCatch[rooms[index].id]!;
+  void joinRoom(String roomId) async {
+    if (joinedRoom == roomId) return;
+    joinedRoom = roomId;
+    var resp = await getRoom(roomId);
+    songs = resp.data.songs;
+    SpotifySdk.pause();
+    socketController?.connectToRoom(roomId);
     update();
   }
 
@@ -76,8 +60,7 @@ class RoomController extends GetxController {
   Future<void> refreshRoomSongs() async {
     loading = true;
     update();
-    var resp = await getRoom(rooms[selectedRoomIndex].id);
-    _roomSongsCatch[rooms[selectedRoomIndex].id] = resp.data.songs;
+    var resp = await getRoom(joinedRoom);
     songs = resp.data.songs;
     loading = false;
     update();

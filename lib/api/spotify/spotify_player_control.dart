@@ -20,8 +20,8 @@ Future<bool> connectToSpotify() async {
     }
 
     if (!event.connected) {
-      SpotifySdk.connectToSpotifyRemote(
-          clientId: Globals.CLIENT_ID, redirectUrl: Globals.REDIRECT_URI);
+      // SpotifySdk.connectToSpotifyRemote(
+      // clientId: Globals.CLIENT_ID, redirectUrl: Globals.REDIRECT_URI);
     }
   });
   return SpotifySdk.connectToSpotifyRemote(

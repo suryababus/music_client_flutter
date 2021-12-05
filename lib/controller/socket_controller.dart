@@ -6,6 +6,7 @@ import 'package:sociomusic/api/Auth.dart';
 import 'package:sociomusic/api/socio_music/response/get_room.dart';
 import 'package:sociomusic/controller/message_controller.dart';
 import 'package:sociomusic/controller/player_controller.dart';
+import 'package:sociomusic/controller/profile_controller.dart';
 import 'package:sociomusic/controller/room_controller.dart';
 import 'package:sociomusic/spotify.config.dart';
 import 'package:spotify_sdk/spotify_sdk.dart';
@@ -17,14 +18,19 @@ class SocketController extends GetxController {
   late RoomController roomController;
   late PlayerController playerControl;
   late MessageController messageController;
+  late ProfileController profileController;
   bool isPaused = false;
   bool isReconnecting = false;
-  SocketController(RoomController _roomController,
-      PlayerController _playerControl, MessageController _messageController) {
+  SocketController(
+      RoomController _roomController,
+      PlayerController _playerControl,
+      MessageController _messageController,
+      ProfileController _profileController) {
     roomController = _roomController;
     playerControl = _playerControl;
     messageController = _messageController;
-    const oneSec = Duration(seconds: 5);
+    profileController = _profileController;
+    const oneSec = Duration(seconds: 60);
 
     Timer.periodic(oneSec, (Timer t) {
       print('pinging');
@@ -42,6 +48,7 @@ class SocketController extends GetxController {
   void _connectToRoom() {
     if (connectedRoomId == null) return;
     send("join_room", data: connectedRoomId);
+    messageController.messages = [];
   }
 
   void connect() {
@@ -177,8 +184,14 @@ class SocketController extends GetxController {
           break;
         case 'text_message':
           {
+            print(data);
+            print(profileController.user);
             messageController.addMessage(Message(
-                MessageType.OWN_Message, data["message"], data["user_name"]));
+                profileController.user?.name == data["user_name"]
+                    ? MessageType.OWN_Message
+                    : MessageType.OTHERS_MESSAGE,
+                data["message"],
+                data["user_name"]));
           }
           break;
 

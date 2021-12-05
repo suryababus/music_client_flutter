@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sociomusic/controller/room_controller.dart';
@@ -23,16 +25,10 @@ class _HomeScreenState extends State<HomeScreen> {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          title: Text("HOME"),
-          centerTitle: true,
-          leading: IconButton(
-            onPressed: () {
-              print('notification pressed');
-            },
-            icon: Icon(
-              Icons.notifications_active,
-              color: Color(0Xff0177fa),
-            ),
+          title: Image.asset(
+            "assets/images/sociomusic.png",
+            height: 50,
+            width: 150,
           ),
           actions: [
             IconButton(
@@ -40,7 +36,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 print('search pressed');
               },
               icon: Icon(
-                Icons.search_outlined,
+                Icons.add_box_outlined,
                 color: Color(0Xff0177fa),
               ),
             ),
@@ -57,15 +53,15 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         body: GetBuilder<RoomController>(builder: (controller) {
           return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(
-                height: 300,
-                child: RoomCarousel(),
+              Expanded(
+                child: ListView.builder(itemBuilder: (contect, index) {
+                  if (index == 0) return OnlineUsers();
+                  return RoomCarousel();
+                }),
               ),
-              Flexible(
-                flex: 3,
-                child: SongsList(),
-              )
+              PlayerControl()
             ],
           );
         }),
@@ -74,55 +70,61 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
-class SongsList extends StatefulWidget {
-  SongsList({Key? key}) : super(key: key);
-
-  @override
-  State<SongsList> createState() => _SongsListState();
-}
-
-class _SongsListState extends State<SongsList> {
-  RoomController roomController = Get.find<RoomController>();
+class OnlineUsers extends StatelessWidget {
+  const OnlineUsers({
+    Key? key,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    var songs = roomController.songs;
     return Column(
-      mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Container(
-          padding: EdgeInsets.all(10),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
           child: Text(
-            'Songs',
-            style: Theme.of(context).textTheme.headline1,
+            "Online",
+            style: TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.w800,
+              fontSize: 18,
+            ),
           ),
         ),
-        Expanded(
-          child: (songs.length == 0)
-              ? Center(
-                  child: Text(
-                    'Nothing Here',
-                    style: Theme.of(context).textTheme.headline1,
-                  ),
-                )
-              : ListView.builder(
-                  itemCount: songs.length,
-                  itemBuilder: (context, index) {
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 20,
-                        vertical: 10,
+        Container(
+          height: 80,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+            child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemBuilder: (context, index) {
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 5),
+                        child: CircleAvatar(
+                          radius: 25,
+                          backgroundImage: NetworkImage(
+                            "https://www.whatsappprofiledpimages.com/wp-content/uploads/2021/08/Profile-Photo-Wallpaper.jpg",
+                          ),
+                        ),
                       ),
-                      child: Text(
-                        songs[index].name,
-                        style: Theme.of(context).textTheme.bodyText1,
-                      ),
-                    );
-                  },
-                ),
-        ),
-        PlayerControl()
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 4),
+                        child: Text(
+                          "Mahes",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 12,
+                          ),
+                        ),
+                      )
+                    ],
+                  );
+                }),
+          ),
+        )
       ],
     );
   }

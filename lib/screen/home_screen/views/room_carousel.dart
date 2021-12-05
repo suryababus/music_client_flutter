@@ -18,138 +18,121 @@ class _RoomCarouselState extends State<RoomCarousel> {
   @override
   Widget build(BuildContext context) {
     final List<Room> rooms = roomController.rooms;
-    return Center(
-        child: Center(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          Flexible(
-            child: PageView.builder(
-                onPageChanged: roomController.updateSelectedRoom,
-                itemCount: rooms.length,
-                physics: const PageScrollPhysics(),
-                controller: PageController(
-                  viewportFraction: 0.7,
+    return Container(
+        height: 250,
+        margin: EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                "Trending",
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w800,
+                  fontSize: 18,
                 ),
-                itemBuilder: (context, index) {
-                  return Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 2, vertical: 5),
-                    child: Container(
-                      child: Stack(
-                        fit: StackFit.expand,
-                        children: [
-                          Container(
-                            alignment: roomController.selectedRoomIndex == index
-                                ? Alignment.center
-                                : roomController.selectedRoomIndex == index - 1
-                                    ? Alignment.centerLeft
-                                    : Alignment.centerRight,
-                            child: AnimatedContainer(
-                              clipBehavior: Clip.hardEdge,
-                              duration: Duration(milliseconds: 300),
+              ),
+            ),
+            Flexible(
+              child: ListView.builder(
+                  itemCount: rooms.length * 3,
+                  scrollDirection: Axis.horizontal,
+                  itemBuilder: (context, index) {
+                    index = (index % 2);
+                    return GestureDetector(
+                      onTap: () {
+                        print(rooms[index].id);
+                        roomController.joinRoom(rooms[index].id);
+                        Get.toNamed("/room");
+                      },
+                      child: Container(
+                        padding: EdgeInsets.symmetric(horizontal: 10),
+                        width: 180,
+                        height: 250,
+                        child: Stack(
+                          children: [
+                            Image.network(
+                              rooms[index].songSpotifyImage,
+                              fit: BoxFit.cover,
+                              width: 180,
+                              height: 250,
+                            ),
+                            Container(
+                              width: double.infinity,
+                              height: double.infinity,
                               decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(20)),
-                              padding: EdgeInsets.symmetric(
-                                vertical:
-                                    roomController.selectedRoomIndex == index
-                                        ? 0
-                                        : 20.0,
-                              ),
-                              child: Image.network(
-                                rooms[index].songSpotifyImage,
-                                fit: BoxFit.fitWidth,
+                                gradient: LinearGradient(
+                                  begin: Alignment.topCenter,
+                                  end: Alignment
+                                      .bottomCenter, // 10% of the width, so there are ten blinds.
+                                  colors: <Color>[
+                                    Colors.transparent,
+                                    Colors.black.withOpacity(0.7),
+                                    Colors.black,
+                                  ],
+                                  stops: [0, 0.4, 1],
+                                ),
                               ),
                             ),
-                          ),
-                          // Container(
-                          //   color: Colors.black.withOpacity(0.3),
-                          // ),
-                          // Positioned(
-                          //   bottom: 0,
-                          //   left: 0,
-                          //   right: 0,
-                          //   child: Center(
-                          //     child: new ClipRect(
-                          //       child: new BackdropFilter(
-                          //         filter: new ImageFilter.blur(
-                          //             sigmaX: 2.0, sigmaY: 2.0),
-                          //         child: new Container(
-                          //           padding: EdgeInsets.symmetric(vertical: 15),
-                          //           decoration: new BoxDecoration(
-                          //               color: Colors.black.withOpacity(0.4)),
-                          //           child: new Center(
-                          //             child: new Text(
-                          //               rooms[index].name,
-                          //               style: TextStyle(
-                          //                 color: Colors.white,
-                          //                 fontWeight: FontWeight.w700,
-                          //                 letterSpacing: 1,
-                          //               ),
-                          //             ),
-                          //           ),
-                          //         ),
-                          //       ),
-                          //     ),
-                          //   ),
-                          // )
-                        ],
+                            Positioned(
+                              bottom: 0,
+                              left: 0,
+                              right: 0,
+                              child: Center(
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Column(
+                                    children: [
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: [
+                                          Padding(
+                                            padding:
+                                                const EdgeInsets.only(right: 4),
+                                            child: Icon(
+                                              Icons
+                                                  .supervised_user_circle_rounded,
+                                              size: 24,
+                                              color: Colors.blue,
+                                            ),
+                                          ),
+                                          Text(
+                                            "4000",
+                                            style: const TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.only(top: 5),
+                                        child: Text(
+                                          rooms[index].name,
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                  );
-                }),
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              Expanded(
-                flex: 1,
-                child: IconButton(
-                  onPressed: () {},
-                  icon: Icon(
-                    Icons.add_circle_outline_outlined,
-                    color: Color(0Xff0177fa),
-                  ),
-                ),
-              ),
-              Expanded(
-                flex: 2,
-                child: Center(
-                  child: Container(
-                    width: 200,
-                    height: 35,
-                    decoration: BoxDecoration(
-                      color: Color(0xde4A4040),
-                      borderRadius: BorderRadius.all(Radius.circular(10)),
-                    ),
-                    margin: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                    child: Center(
-                      child: Text(
-                        rooms[roomController.selectedRoomIndex].name,
-                        style: Theme.of(context).textTheme.headline1,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              Expanded(
-                flex: 1,
-                child: Center(
-                  child: IconButton(
-                    onPressed: () {
-                      Get.toNamed('/room');
-                    },
-                    icon: Icon(
-                      Icons.play_circle,
-                      color: Color(0Xff0177fa),
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    ));
+                    );
+                  }),
+            ),
+          ],
+        ));
   }
 }

@@ -5,7 +5,7 @@ class CustomTheme {
     return ThemeData(
       primaryColor: Colors.brown,
       appBarTheme: AppBarTheme(
-        backgroundColor: Colors.blue.withOpacity(0.1),
+        backgroundColor: Colors.transparent,
         shadowColor: Colors.transparent,
       ),
       scaffoldBackgroundColor: Colors.black,

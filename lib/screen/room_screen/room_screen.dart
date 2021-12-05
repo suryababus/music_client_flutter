@@ -21,7 +21,6 @@ class _RoomScreenState extends State<RoomScreen>
 
   @override
   void initState() {
-    Get.find<RoomController>().joinRoom();
     tabController = TabController(length: 2, initialIndex: 0, vsync: this);
     tabController?.addListener(() {
       //don't remove it
@@ -252,9 +251,20 @@ class MessageFromOtherUsers extends StatelessWidget {
             vertical: 2,
             horizontal: 20,
           ),
-          child: Text(
-            'Message',
-            style: Theme.of(context).textTheme.headline1,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                message.userName ?? "unKnown",
+                style: TextStyle(
+                  color: Colors.blue,
+                ),
+              ),
+              Text(
+                message.message,
+                style: Theme.of(context).textTheme.headline1,
+              ),
+            ],
           ),
         ),
       ],

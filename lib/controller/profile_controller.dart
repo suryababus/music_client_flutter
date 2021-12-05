@@ -66,7 +66,7 @@ class ProfileController extends GetxController {
         instantInit: false,
       );
     }
-    var user = await SocioMusicAuth.authenticate();
+    user = await SocioMusicAuth.authenticate();
     if (user == null) {
       return;
     }
@@ -78,7 +78,8 @@ class ProfileController extends GetxController {
     var playerController =
         Get.put<PlayerController>(PlayerController(), permanent: true);
     var socketController = Get.put<SocketController>(
-        SocketController(roomController, playerController, messageController),
+        SocketController(
+            roomController, playerController, messageController, this),
         permanent: true);
     roomController.setSocketController(socketController);
     playerController.socketController = socketController;

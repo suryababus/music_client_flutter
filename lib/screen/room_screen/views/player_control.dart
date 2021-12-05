@@ -56,7 +56,6 @@ class _PlayerControlState extends State<PlayerControl> {
                     child: FutureBuilder<Uint8List?>(
                         future: imagerUri,
                         builder: (context, snapshot) {
-                          print('called');
                           if (snapshot.hasData) {
                             var image = snapshot.data;
                             if (image != null) {

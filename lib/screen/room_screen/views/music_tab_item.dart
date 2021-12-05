@@ -143,9 +143,7 @@ class RadioLineItem extends StatelessWidget {
               TextButton(
                 onPressed: () async {
                   var success = await reactToSong(
-                      roomController.rooms[roomController.selectedRoomIndex].id,
-                      song.id,
-                      'like');
+                      roomController.joinedRoom, song.id, 'like');
                   if (success) roomController.refreshRoomSongs();
                 },
                 child: Row(
@@ -170,9 +168,7 @@ class RadioLineItem extends StatelessWidget {
               TextButton(
                 onPressed: () async {
                   var success = await reactToSong(
-                      roomController.rooms[roomController.selectedRoomIndex].id,
-                      song.id,
-                      'dislike');
+                      roomController.joinedRoom, song.id, 'dislike');
                   if (success) roomController.refreshRoomSongs();
                 },
                 child: Row(

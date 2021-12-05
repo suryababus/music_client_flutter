@@ -143,8 +143,7 @@ class SearchLineItem extends StatelessWidget {
       "image_url_small": item.album.images[2].url,
       "duration_ms": item.durationMs.toString()
     };
-    if (await addSongToRoom(
-        roomController.rooms[roomController.selectedRoomIndex].id, song)) {
+    if (await addSongToRoom(roomController.joinedRoom, song)) {
       print('added');
       Get.back();
     } else {
